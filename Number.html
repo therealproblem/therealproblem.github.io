@@ -66,7 +66,7 @@
         var tileStartState = []; // for replay
         var startTime = new Date();
         var endTime = new Date();
-        var blankLoc = 15;
+        var blankLoc = 0;
         var tileNum = 3;
         var interval;
     </script>
@@ -96,6 +96,7 @@
             var targetLoc = blankLoc + tileNum;
             if (targetLoc < tileNum * tileNum) {
                 tileState = swapTiles(tileState, targetLoc);
+                updateTiles();
                 return true;
             }
             return false;
@@ -105,6 +106,7 @@
             var targetLoc = blankLoc - tileNum;
             if (targetLoc >= 0) {
                 tileState = swapTiles(tileState, targetLoc);
+                updateTiles();
                 return true;
             }
             return false;
@@ -115,6 +117,7 @@
             if ((tileNum == 3 && targetLoc != -1 && targetLoc != 2 && targetLoc != 5 && targetLoc != 8) ||
                 (tileNum == 4 && targetLoc != -1 && targetLoc != 3 && targetLoc != 7 && targetLoc != 11)) {
                 tileState = swapTiles(tileState, targetLoc);
+                updateTiles();
                 return true;
             }
             return false;
@@ -125,6 +128,7 @@
             if ((tileNum == 3 && targetLoc != 0 && targetLoc != 3 && targetLoc != 6 && targetLoc != 9) ||
                 (tileNum == 4 && targetLoc != 16 && targetLoc != 4 && targetLoc != 8 && targetLoc != 12)) {
                 tileState = swapTiles(tileState, targetLoc);
+                updateTiles();
                 return true;
             }
             return false;
@@ -150,8 +154,9 @@
     <!-- Game Logic -->
     <script>
         function startGame(num) {
-            console.log("start");
             tileNum = num;
+            tileState = tileNum == 3 ? winState3.slice(0) : winState4.slice(0);
+            blankLoc = tileNum * tileNum - 1;
             randomGame();
             startGameLoop();
         }
@@ -173,14 +178,7 @@
             updateTiles();
             showContainer("game-container");
             startTime = new Date();
-            var gameEnd = false;
             interval = setInterval(function () {
-                updateTiles();
-                gameEnd = checkWin();
-                if (gameEnd) {
-                    clearInterval(interval);
-                    showContainer("game-over");
-                }
                 // updateTime
                 endTime = new Date();
                 var timers = document.getElementsByClassName("timer");
@@ -195,17 +193,21 @@
             winState.map((n, i) => {
                 if (n != tileState[i]) win = false;
             });
-            return win;
+
+            if (win) {
+                clearInterval(interval);
+                showContainer("game-over");
+            }
         }
 
         function randomGame() {
-            var i = 0
+            var i = 0;
             while (i < 200) {
                 var move = Math.floor(Math.random() * 4);
-                if (move == 0) up()
-                else if (move == 1) down()
-                else if (move == 2) left()
-                else right()
+                if (move == 0) up();
+                else if (move == 1) down();
+                else if (move == 2) left();
+                else right();
                 i++;
             }
         }
@@ -224,9 +226,9 @@
 
         function updateTiles() {
             tileState.map((t, i) => {
-                console.log(document.getElementById(`${tileNum}-${i}`));
                 if (document.getElementById(`${tileNum}-${i}`)) document.getElementById(`${tileNum}-${i}`).innerHTML = t > 0 ? t : "";
             });
+            checkWin();
         }
     </script>
     <!-- Styles -->
@@ -237,6 +239,8 @@
         }
 
         .game {
+            background-color: #ecf0f1;
+            color: ;
             height: 100vh;
             width: 100vw;
             display: flex;
@@ -258,34 +262,40 @@
         }
 
         .btn.primary {
-            background-color: navy;
-            border: 1px solid navy;
-            color: white;
-        }
-
-        .btn.warning {
-            background-color: maroon;
-            border: 1px solid maroon;
-            color: white;
+            background-color: #3498db;
+            border: 1px solid #3498db;
+            color: #ecf0f1;
         }
 
         .btn.primary:active {
-            background-color: black;
+            background-color: #2980b9;
+            border: 1px solid #2980b9;
+        }
+
+        .btn.warning {
+            background-color: #e74c3c;
+            border: 1px solid #e74c3c;
+            color: #ecf0f1;
+        }
+
+        .btn.warining:active {
+            background-color: #c0392b;
+            border: 1px solid #c0392b;
         }
 
         .btn.secondary {
-            background-color: white;
-            border: 1px solid black;
-            color: black;
+            background-color: #ecf0f1;
+            border: 1px solid #2c3e50;
+            color: #2c3e50;
         }
 
         .btn.secondary:active {
-            background-color: gray;
+            background-color: #95a5a6;
         }
 
         .tile {
             cursor: pointer;
-            border: 1px solid black;
+            border: 1px solid #2c3e50;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -293,18 +303,15 @@
         }
 
         .tile-container {
+            height: 288px;
+            width: 288px;
             display: flex;
             flex-direction: row;
             justify-content: flex-start;
             align-items: flex-start;
             flex-wrap: wrap;
-            border: 10px solid black;
+            border: 10px solid #2c3e50;
             display: none;
-        }
-
-        #mode-4 {
-            height: 288px;
-            width: 288px;
         }
 
         #mode-4 .tile {
@@ -312,47 +319,9 @@
             height: 70px;
         }
 
-        #mode-3 {
-            height: 278px;
-            width: 278px;
-        }
-
         #mode-3 .tile {
-            width: 90px;
-            height: 90px;
-        }
-
-        .controls div {
-            width: 50px;
-            height: 50px;
-            border-radius: 5px;
-            border: 5px solid black;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 25px;
-        }
-
-        .controls div:active {
-            background-color: black;
-            color: white;
-        }
-
-        .controls {
-            margin-top: 10px;
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            width: 200px;
-        }
-
-        .controls.top,
-        .controls.bot {
-            justify-content: center;
-        }
-
-        .controls.mid {
-            justify-content: space-between;
+            width: 94px;
+            height: 94px;
         }
 
         #game-container,
