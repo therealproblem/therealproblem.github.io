@@ -1,0 +1,365 @@
+<!doctype html>
+
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <title>Numbers</title>
+
+</head>
+
+<body>
+    <div class="game menu" id="game-menu">
+        <h1>Numbers!</h1>
+        <div onclick="startGame(3)" class="btn primary">START 3x3</div>
+        <div onclick="startGame(4)" class="btn primary">START 4x4</div>
+    </div>
+    <div class="game over" id="game-over">
+        <h1 class="timer">0s</h1>
+        <p>You've solved it!</p>
+        <div onclick="startGame()" class="btn primary">NEW GAME</div>
+        <div onclick="retrySameGame()" class="btn secondary">RETRY</div>
+        <div onclick="exitGame()" class="btn warning">EXIT</div>
+    </div>
+    <div class="game container" id="game-container">
+        <h1 class="timer">0s</h1>
+        <div class="tile-container" id="mode-4">
+            <div class="tile" onclick="checkValidMove(0)" id="4-0">1</div>
+            <div class="tile" onclick="checkValidMove(1)" id="4-1">2</div>
+            <div class="tile" onclick="checkValidMove(2)" id="4-2">3</div>
+            <div class="tile" onclick="checkValidMove(3)" id="4-3">4</div>
+            <div class="tile" onclick="checkValidMove(4)" id="4-4">5</div>
+            <div class="tile" onclick="checkValidMove(5)" id="4-5">6</div>
+            <div class="tile" onclick="checkValidMove(6)" id="4-6">7</div>
+            <div class="tile" onclick="checkValidMove(7)" id="4-7">8</div>
+            <div class="tile" onclick="checkValidMove(8)" id="4-8">9</div>
+            <div class="tile" onclick="checkValidMove(9)" id="4-9">10</div>
+            <div class="tile" onclick="checkValidMove(10)" id="4-10">11</div>
+            <div class="tile" onclick="checkValidMove(11)" id="4-11">12</div>
+            <div class="tile" onclick="checkValidMove(12)" id="4-12">13</div>
+            <div class="tile" onclick="checkValidMove(13)" id="4-13">14</div>
+            <div class="tile" onclick="checkValidMove(14)" id="4-14">15</div>
+            <div class="tile" onclick="checkValidMove(15)" id="4-15"></div>
+        </div>
+        <div class="tile-container" id="mode-3">
+            <div class="tile" onclick="checkValidMove(0)" id="3-0">1</div>
+            <div class="tile" onclick="checkValidMove(1)" id="3-1">2</div>
+            <div class="tile" onclick="checkValidMove(2)" id="3-2">3</div>
+            <div class="tile" onclick="checkValidMove(3)" id="3-3">4</div>
+            <div class="tile" onclick="checkValidMove(4)" id="3-4">5</div>
+            <div class="tile" onclick="checkValidMove(5)" id="3-5">6</div>
+            <div class="tile" onclick="checkValidMove(6)" id="3-6">7</div>
+            <div class="tile" onclick="checkValidMove(7)" id="3-7">8</div>
+            <div class="tile" onclick="checkValidMove(8)" id="3-8">0</div>
+        </div>
+        <br />
+        <br />
+        <br />
+        <div onclick="showContainer('game-menu')" class="btn warning">EXIT</div>
+    </div>
+    <!-- Variables -->
+    <script>
+        const winState3 = [1, 2, 3, 4, 5, 6, 7, 8, 0];
+        const winState4 = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 0];
+        var tileState = [];
+        var tileStartState = []; // for replay
+        var startTime = new Date();
+        var endTime = new Date();
+        var blankLoc = 15;
+        var tileNum = 3;
+        var interval;
+    </script>
+    <!-- mobile click -->
+    <script>
+        function checkValidMove(id) {
+            var targetUp = id - tileNum;
+            var targetDown = id + tileNum;
+            var targetLeft = id - 1;
+            var targetRight = id + 1;
+            if (targetUp == blankLoc) up();
+            if (targetDown == blankLoc) down();
+            if (targetLeft == blankLoc) left();
+            if (targetRight == blankLoc) right();
+        }
+    </script>
+    <!-- Movement functions -->
+    <script>
+        document.addEventListener('keyup', function (event) {
+            if (event.key === "w" || event.key === "ArrowUp") up();
+            else if (event.key === "a" || event.key === "ArrowLeft") left();
+            else if (event.key === "s" || event.key === "ArrowDown") down();
+            else if (event.key === "d" || event.key === "ArrowRight") right();
+        });
+
+        function up() {
+            var targetLoc = blankLoc + tileNum;
+            if (targetLoc < tileNum * tileNum) {
+                tileState = swapTiles(tileState, targetLoc);
+                return true;
+            }
+            return false;
+        }
+
+        function down() {
+            var targetLoc = blankLoc - tileNum;
+            if (targetLoc >= 0) {
+                tileState = swapTiles(tileState, targetLoc);
+                return true;
+            }
+            return false;
+        }
+
+        function right() {
+            var targetLoc = blankLoc - 1;
+            if ((tileNum == 3 && targetLoc != -1 && targetLoc != 2 && targetLoc != 5 && targetLoc != 8) ||
+                (tileNum == 4 && targetLoc != -1 && targetLoc != 3 && targetLoc != 7 && targetLoc != 11)) {
+                tileState = swapTiles(tileState, targetLoc);
+                return true;
+            }
+            return false;
+        }
+
+        function left() {
+            var targetLoc = blankLoc + 1;
+            if ((tileNum == 3 && targetLoc != 0 && targetLoc != 3 && targetLoc != 6 && targetLoc != 9) ||
+                (tileNum == 4 && targetLoc != 16 && targetLoc != 4 && targetLoc != 8 && targetLoc != 12)) {
+                tileState = swapTiles(tileState, targetLoc);
+                return true;
+            }
+            return false;
+        }
+
+        function moveBlankToCorner() {
+            up();
+            up();
+            up();
+            left();
+            left();
+            left();
+            tileStartState = tileState.slice(0);
+        }
+
+        function swapTiles(arr, target) {
+            arr[blankLoc] = arr[target];
+            arr[target] = 0;
+            blankLoc = target;
+            return arr;
+        }
+    </script>
+    <!-- Game Logic -->
+    <script>
+        function startGame(num) {
+            console.log("start");
+            tileNum = num;
+            randomGame();
+            startGameLoop();
+        }
+
+        function retrySameGame() {
+            tileStartState.map((t, i) => {
+                tileState[i] = t;
+            });
+            startGameLoop();
+        }
+
+        function exitGame() {
+            clearInterval(interval);
+            showContainer('game-menu');
+        }
+
+        function startGameLoop() {
+            moveBlankToCorner();
+            updateTiles();
+            showContainer("game-container");
+            startTime = new Date();
+            var gameEnd = false;
+            interval = setInterval(function () {
+                updateTiles();
+                gameEnd = checkWin();
+                if (gameEnd) {
+                    clearInterval(interval);
+                    showContainer("game-over");
+                }
+                // updateTime
+                endTime = new Date();
+                var timers = document.getElementsByClassName("timer");
+                timers[0].innerHTML = `${((endTime - startTime) / 1000).toFixed(1)}s`;
+                timers[1].innerHTML = `${((endTime - startTime) / 1000).toFixed(1)}s`;
+            }, 10);
+        }
+
+        function checkWin() {
+            var win = true;
+            var winState = tileNum == 3 ? winState3 : winState4;
+            winState.map((n, i) => {
+                if (n != tileState[i]) win = false;
+            });
+            return win;
+        }
+
+        function randomGame() {
+            var i = 0
+            while (i < 200) {
+                var move = Math.floor(Math.random() * 4);
+                if (move == 0) up()
+                else if (move == 1) down()
+                else if (move == 2) left()
+                else right()
+                i++;
+            }
+        }
+
+        function showContainer(id) {
+            document.getElementById("game-menu").style.display = "none";
+            document.getElementById("game-over").style.display = "none";
+            document.getElementById("game-container").style.display = "none";
+            document.getElementById(id).style.display = "flex";
+            document.getElementById("mode-3").style.display = "none";
+            document.getElementById("mode-4").style.display = "none";
+            if (id === "game-container") {
+                document.getElementById("mode-" + tileNum).style.display = "flex";
+            }
+        }
+
+        function updateTiles() {
+            tileState.map((t, i) => {
+                console.log(document.getElementById(`${tileNum}-${i}`));
+                if (document.getElementById(`${tileNum}-${i}`)) document.getElementById(`${tileNum}-${i}`).innerHTML = t > 0 ? t : "";
+            });
+        }
+    </script>
+    <!-- Styles -->
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+        }
+
+        .game {
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn {
+            width: 300px;
+            height: 60px;
+            border-radius: 5px;
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        .btn.primary {
+            background-color: navy;
+            border: 1px solid navy;
+            color: white;
+        }
+
+        .btn.warning {
+            background-color: maroon;
+            border: 1px solid maroon;
+            color: white;
+        }
+
+        .btn.primary:active {
+            background-color: black;
+        }
+
+        .btn.secondary {
+            background-color: white;
+            border: 1px solid black;
+            color: black;
+        }
+
+        .btn.secondary:active {
+            background-color: gray;
+        }
+
+        .tile {
+            cursor: pointer;
+            border: 1px solid black;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 25px;
+        }
+
+        .tile-container {
+            display: flex;
+            flex-direction: row;
+            justify-content: flex-start;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            border: 10px solid black;
+            display: none;
+        }
+
+        #mode-4 {
+            height: 288px;
+            width: 288px;
+        }
+
+        #mode-4 .tile {
+            width: 70px;
+            height: 70px;
+        }
+
+        #mode-3 {
+            height: 278px;
+            width: 278px;
+        }
+
+        #mode-3 .tile {
+            width: 90px;
+            height: 90px;
+        }
+
+        .controls div {
+            width: 50px;
+            height: 50px;
+            border-radius: 5px;
+            border: 5px solid black;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 25px;
+        }
+
+        .controls div:active {
+            background-color: black;
+            color: white;
+        }
+
+        .controls {
+            margin-top: 10px;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            width: 200px;
+        }
+
+        .controls.top,
+        .controls.bot {
+            justify-content: center;
+        }
+
+        .controls.mid {
+            justify-content: space-between;
+        }
+
+        #game-container,
+        #game-over {
+            display: none;
+        }
+    </style>
+</body>
+
+</html>
