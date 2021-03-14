@@ -6,7 +6,6 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
     <title>Numbers</title>
-
 </head>
 
 <body>
@@ -69,6 +68,13 @@
         var blankLoc = 0;
         var tileNum = 3;
         var interval;
+    </script>
+    <!-- End game when user moves away from game -->
+    <script>
+        document.addEventListener("visibilitychange", function () {
+            clearInterval(interval);
+            showContainer("game-menu");
+        });
     </script>
     <!-- mobile click -->
     <script>
@@ -233,9 +239,10 @@
     </script>
     <!-- Styles -->
     <style>
-        html { 
+        html {
             overflow: hidden;
         }
+
         body {
             margin: 0;
             font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
