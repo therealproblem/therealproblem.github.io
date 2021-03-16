@@ -11,8 +11,8 @@
 <body>
     <div class="game menu" id="game-menu">
         <h1>Numbers!</h1>
-        <div onclick="startGame(3)" class="btn primary">START 3x3</div>
-        <div onclick="startGame(4)" class="btn primary">START 4x4</div>
+        <p>Picture Ver.</p>
+        <div onclick="startGame(3)" class="btn primary">START</div>
     </div>
     <div class="game over" id="game-over">
         <h1 class="timer">0s</h1>
@@ -23,43 +23,40 @@
     </div>
     <div class="game container" id="game-container">
         <h1 class="timer">0s</h1>
-        <div class="tile-container" id="mode-4">
-            <div class="tile" onclick="checkValidMove(0)" id="4-0">1</div>
-            <div class="tile" onclick="checkValidMove(1)" id="4-1">2</div>
-            <div class="tile" onclick="checkValidMove(2)" id="4-2">3</div>
-            <div class="tile" onclick="checkValidMove(3)" id="4-3">4</div>
-            <div class="tile" onclick="checkValidMove(4)" id="4-4">5</div>
-            <div class="tile" onclick="checkValidMove(5)" id="4-5">6</div>
-            <div class="tile" onclick="checkValidMove(6)" id="4-6">7</div>
-            <div class="tile" onclick="checkValidMove(7)" id="4-7">8</div>
-            <div class="tile" onclick="checkValidMove(8)" id="4-8">9</div>
-            <div class="tile" onclick="checkValidMove(9)" id="4-9">10</div>
-            <div class="tile" onclick="checkValidMove(10)" id="4-10">11</div>
-            <div class="tile" onclick="checkValidMove(11)" id="4-11">12</div>
-            <div class="tile" onclick="checkValidMove(12)" id="4-12">13</div>
-            <div class="tile" onclick="checkValidMove(13)" id="4-13">14</div>
-            <div class="tile" onclick="checkValidMove(14)" id="4-14">15</div>
-            <div class="tile" onclick="checkValidMove(15)" id="4-15"></div>
-        </div>
         <div class="tile-container" id="mode-3">
-            <div class="tile" onclick="checkValidMove(0)" id="3-0">1</div>
-            <div class="tile" onclick="checkValidMove(1)" id="3-1">2</div>
-            <div class="tile" onclick="checkValidMove(2)" id="3-2">3</div>
-            <div class="tile" onclick="checkValidMove(3)" id="3-3">4</div>
-            <div class="tile" onclick="checkValidMove(4)" id="3-4">5</div>
-            <div class="tile" onclick="checkValidMove(5)" id="3-5">6</div>
-            <div class="tile" onclick="checkValidMove(6)" id="3-6">7</div>
-            <div class="tile" onclick="checkValidMove(7)" id="3-7">8</div>
+            <div class="tile" onclick="checkValidMove(0)" id="3-0">0</div>
+            <div class="tile" onclick="checkValidMove(1)" id="3-1">0</div>
+            <div class="tile" onclick="checkValidMove(2)" id="3-2">0</div>
+            <div class="tile" onclick="checkValidMove(3)" id="3-3">0</div>
+            <div class="tile" onclick="checkValidMove(4)" id="3-4">0</div>
+            <div class="tile" onclick="checkValidMove(5)" id="3-5">0</div>
+            <div class="tile" onclick="checkValidMove(6)" id="3-6">0</div>
+            <div class="tile" onclick="checkValidMove(7)" id="3-7">0</div>
             <div class="tile" onclick="checkValidMove(8)" id="3-8">0</div>
         </div>
         <br />
         <br />
         <br />
-        <div onclick="exitGame();" class="btn warning">EXIT</div>
+        <div onclick="exitGame()" class="btn warning">EXIT</div>
     </div>
+    <!-- Links Array -->
+    <script>
+        const links = [
+            // "E3YVYdFO_0I","ClJ6ivP5Sa0","FilM6ng7VGQ","GVi0ijl8ExM","h3Ya6RuBvo0","hi-NZw9nIyQ","bI_Fkt7p0Ks",
+            // "X2PwqTUpXH8","795upe4hZRw","g55ZLFn5TR8","rplhB9mYF48","kD4AXcuvnTE","tUTlUel_Nvs","6DSID8Ey9-U",
+            // "KD6na8-qGPI","qMVh19qFQr8","68TNAlaARpY","utRiuHGoJ0A","8r9t5JaQ6Ng","P4FmHaSI-dw",
+            "a5zgROqBdcE"
+        ];
+    </script>
     <!-- Variables -->
     <script>
         const winState3 = [1, 2, 3, 4, 5, 6, 7, 8, 0];
+        const statePosMap = [
+            "left top", "center top", "right top",
+            "left center", "center center", "right center",
+            "left bottom", "center bottom", "right bottom"
+        ];
+        var tiles = document.getElementsByClassName("tile");
         const winState4 = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 0];
         var tileState = [];
         var tileStartState = []; // for replay
@@ -70,6 +67,7 @@
         var interval;
         var lastPage = "game-menu";
         var currentPage = "game-menu";
+        var currentImg = "";
     </script>
     <!-- End game when user moves away from game -->
     <script>
@@ -151,6 +149,20 @@
             left();
             left();
             tileStartState = tileState.slice(0);
+            setPicture();
+        }
+
+        function setPicture() {
+            var i = 0;
+            for(var t of tiles) {
+                if (tileState[i] > 0) {
+                    t.style.backgroundImage = `url("https://unsplash.com/photos/${currentImg}/download?w=320")`;
+                    t.style.backgroundPosition = `${statePosMap[tileState[i] - 1]}`;
+                } else {
+                    t.style.backgroundImage = `url("")`;
+                }
+                i++;
+            }
         }
 
         function swapTiles(arr, target) {
@@ -211,6 +223,7 @@
         }
 
         function randomGame() {
+            currentImg = links[Math.floor(Math.random() * links.length)];
             var i = 0;
             while (i < 200) {
                 var move = Math.floor(Math.random() * 4);
@@ -230,7 +243,6 @@
             document.getElementById("game-container").style.display = "none";
             document.getElementById(id).style.display = "flex";
             document.getElementById("mode-3").style.display = "none";
-            document.getElementById("mode-4").style.display = "none";
             if (id === "game-container") {
                 document.getElementById("mode-" + tileNum).style.display = "flex";
             }
@@ -238,8 +250,10 @@
 
         function updateTiles() {
             tileState.map((t, i) => {
-                if (document.getElementById(`${tileNum}-${i}`)) document.getElementById(`${tileNum}-${i}`).innerHTML = t > 0 ? t : "";
+                // tiles[i].innerHTML = t > 0 ? t : "";
+                tiles[i].innerHTML = t > 0 ? "" : "";
             });
+            setPicture();
             checkWin();
         }
     </script>
@@ -327,11 +341,8 @@
         .tile {
             cursor: pointer;
             border: 1px solid #2c3e50;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 25px;
-            font-weight: bold;
+            background-size: 288px 288px;
+            padding: 10px;
         }
 
         .tile-container {
@@ -346,14 +357,9 @@
             display: none;
         }
 
-        #mode-4 .tile {
-            width: 70px;
-            height: 70px;
-        }
-
         #mode-3 .tile {
-            width: 94px;
-            height: 94px;
+            width: 74px;
+            height: 74px;
         }
 
         #game-container,
@@ -365,16 +371,12 @@
             .tile-container {
                 height: 264px;
                 width: 264px;
-            }
-
-            #mode-4 .tile {
-                width: 64px;
-                height: 64px;
+                background-size: 264px 264px;
             }
 
             #mode-3 .tile {
-                width: 86px;
-                height: 86px;
+                width: 66px;
+                height: 66px;
             }
         }
     </style>
