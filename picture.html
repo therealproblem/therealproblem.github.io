@@ -17,6 +17,7 @@
     <div class="game over" id="game-over">
         <h1 class="timer">0s</h1>
         <p>You've solved it!</p>
+        <div id="full-pict"></div>
         <div onclick="startGame()" class="btn primary">NEW GAME</div>
         <div onclick="retrySameGame()" class="btn secondary">RETRY</div>
         <div onclick="exitGame()" class="btn warning">EXIT</div>
@@ -56,6 +57,7 @@
             "left bottom", "center bottom", "right bottom"
         ];
         var tiles = document.getElementsByClassName("tile");
+        var fullPict = document.getElementById("full-pict");
         const winState4 = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 0];
         var tileState = [];
         var tileStartState = []; // for replay
@@ -195,6 +197,8 @@
         }
 
         function startGameLoop() {
+            fullPict.style.backgroundImage = `url("https://unsplash.com/photos/${currentImg}/download?w=320")`;
+            fullPict.onclick = function() { window.open(`https://unsplash.com/photos/${currentImg}`); }
             moveBlankToCorner();
             updateTiles();
             showContainer("game-container");
@@ -224,14 +228,14 @@
         function randomGame() {
             currentImg = links[Math.floor(Math.random() * links.length)];
             var i = 0;
-            while (i < 200) {
-                var move = Math.floor(Math.random() * 4);
-                if (move == 0) up();
-                else if (move == 1) down();
-                else if (move == 2) left();
-                else right();
-                i++;
-            }
+            // while (i < 200) {
+            //     var move = Math.floor(Math.random() * 4);
+            //     if (move == 0) up();
+            //     else if (move == 1) down();
+            //     else if (move == 2) left();
+            //     else right();
+            //     i++;
+            // }
         }
 
         function showContainer(id) {
@@ -364,6 +368,12 @@
         #game-container,
         #game-over {
             display: none;
+        }
+
+        #full-pict {
+            height: 150px;
+            width: 150px;
+            background-size: cover;
         }
 
         @media screen and (max-width: 320px) {
