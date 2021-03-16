@@ -9,6 +9,7 @@
 </head>
 
 <body>
+    <div id="img-loader"></div>
     <div class="game menu" id="game-menu">
         <h1>Numbers!</h1>
         <p>Picture Ver.</p>
@@ -26,7 +27,7 @@
     <div class="game container" id="game-container">
         <h1 class="timer">0s</h1>
         <div class="tile-container" id="mode-3">
-            <div class="tile" onclick="checkValidMove(0)" id="3-0">0</div>
+            <div class="tile" onclick="checkValidMove(0)" id="3-0" onload="console.log('done');">0</div>
             <div class="tile" onclick="checkValidMove(1)" id="3-1">0</div>
             <div class="tile" onclick="checkValidMove(2)" id="3-2">0</div>
             <div class="tile" onclick="checkValidMove(3)" id="3-3">0</div>
@@ -44,10 +45,19 @@
     <!-- Links Array -->
     <script>
         const links = [
-            "E3YVYdFO_0I","ClJ6ivP5Sa0","FilM6ng7VGQ","GVi0ijl8ExM","h3Ya6RuBvo0","hi-NZw9nIyQ","bI_Fkt7p0Ks",
-            "X2PwqTUpXH8","795upe4hZRw","g55ZLFn5TR8","rplhB9mYF48","kD4AXcuvnTE","tUTlUel_Nvs","6DSID8Ey9-U",
-            "KD6na8-qGPI","qMVh19qFQr8","68TNAlaARpY","utRiuHGoJ0A","8r9t5JaQ6Ng","P4FmHaSI-dw","a5zgROqBdcE"
+            "E3YVYdFO_0I", "ClJ6ivP5Sa0", "FilM6ng7VGQ", "GVi0ijl8ExM", "h3Ya6RuBvo0", "hi-NZw9nIyQ", "bI_Fkt7p0Ks",
+            "X2PwqTUpXH8", "795upe4hZRw", "g55ZLFn5TR8", "rplhB9mYF48", "kD4AXcuvnTE", "tUTlUel_Nvs", "6DSID8Ey9-U",
+            "KD6na8-qGPI", "qMVh19qFQr8", "68TNAlaARpY", "utRiuHGoJ0A", "8r9t5JaQ6Ng", "P4FmHaSI-dw", "a5zgROqBdcE"
         ];
+        // load img
+        function load() {
+            var imgString = "";
+            for (var imgUrl of links) {
+                imgString += `url("https://unsplash.com/photos/${imgUrl}/download?w=320") `;
+            }
+            document.getElementById("img-loader").style.content = imgString;
+        }
+        load();
     </script>
     <!-- Variables -->
     <script>
@@ -156,7 +166,7 @@
 
         function setPicture() {
             var i = 0;
-            for(var t of tiles) {
+            for (var t of tiles) {
                 if (tileState[i] > 0) {
                     t.style.backgroundImage = `url("https://unsplash.com/photos/${currentImg}/download?w=320")`;
                     t.style.backgroundPosition = `${statePosMap[tileState[i] - 1]}`;
@@ -199,7 +209,7 @@
 
         function startGameLoop() {
             fullPict.style.backgroundImage = `url("https://unsplash.com/photos/${currentImg}/download?w=320")`;
-            fullPict.onclick = function() { window.open(`https://unsplash.com/photos/${currentImg}`); }
+            fullPict.onclick = function () { window.open(`https://unsplash.com/photos/${currentImg}`); }
             moveBlankToCorner();
             updateTiles();
             showContainer("game-container");
