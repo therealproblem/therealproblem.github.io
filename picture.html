@@ -13,6 +13,7 @@
         <h1>Numbers!</h1>
         <p>Picture Ver.</p>
         <div onclick="startGame(3)" class="btn primary">START</div>
+        <div onclick="location.href = './index.html';" class="btn primary">NUMBERS VER.</div>
     </div>
     <div class="game over" id="game-over">
         <h1 class="timer">0s</h1>
@@ -228,14 +229,14 @@
         function randomGame() {
             currentImg = links[Math.floor(Math.random() * links.length)];
             var i = 0;
-            // while (i < 200) {
-            //     var move = Math.floor(Math.random() * 4);
-            //     if (move == 0) up();
-            //     else if (move == 1) down();
-            //     else if (move == 2) left();
-            //     else right();
-            //     i++;
-            // }
+            while (i < 200) {
+                var move = Math.floor(Math.random() * 4);
+                if (move == 0) up();
+                else if (move == 1) down();
+                else if (move == 2) left();
+                else right();
+                i++;
+            }
         }
 
         function showContainer(id) {
